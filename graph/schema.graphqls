@@ -14,3 +14,22 @@ type User {
 type Query {
   link: [Link!]!
 }
+
+input NewLink {
+  title: String!
+  address: String!
+}
+
+input RefreshTokenInput {
+  token: String!
+}
+
+input NewUser {
+  username: String!
+  password: String!
+}
+
+input Login {
+  username: String!
+  password: String!
+}
