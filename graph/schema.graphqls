@@ -12,7 +12,7 @@ type User {
 }
 
 type Query {
-  link: [Link!]!
+  links: [Link!]!
 }
 
 input NewLink {
