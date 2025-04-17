@@ -62,7 +62,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Link func(childComplexity int) int
+		Links func(childComplexity int) int
 	}
 
 	User struct {
@@ -78,7 +78,7 @@ type MutationResolver interface {
 	RefreshToken(ctx context.Context, input model.RefreshTokenInput) (string, error)
 }
 type QueryResolver interface {
-	Link(ctx context.Context) ([]*model.Link, error)
+	Links(ctx context.Context) ([]*model.Link, error)
 }
 
 type executableSchema struct {
@@ -176,12 +176,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.RefreshToken(childComplexity, args["input"].(model.RefreshTokenInput)), true
 
-	case "Query.link":
-		if e.complexity.Query.Link == nil {
+	case "Query.links":
+		if e.complexity.Query.Links == nil {
 			break
 		}
 
-		return e.complexity.Query.Link(childComplexity), true
+		return e.complexity.Query.Links(childComplexity), true
 
 	case "User.id":
 		if e.complexity.User.ID == nil {
@@ -952,8 +952,8 @@ func (ec *executionContext) fieldContext_Mutation_refreshToken(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_link(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_link(ctx, field)
+func (ec *executionContext) _Query_links(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_links(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -966,7 +966,7 @@ func (ec *executionContext) _Query_link(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Link(rctx)
+		return ec.resolvers.Query().Links(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -983,7 +983,7 @@ func (ec *executionContext) _Query_link(ctx context.Context, field graphql.Colle
 	return ec.marshalNLink2ᚕᚖgithubᚗcomᚋTeddyMuliᚋgo_graphql_apiᚋgraphᚋmodelᚐLinkᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_link(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_links(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -3456,7 +3456,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "link":
+		case "links":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -3465,7 +3465,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_link(ctx, field)
+				res = ec._Query_links(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
