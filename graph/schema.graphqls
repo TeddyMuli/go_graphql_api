@@ -1,0 +1,16 @@
+type Link {
+  id: ID!
+  title: String!
+  address: String!
+  user: User!
+}
+
+
+type User {
+  id: ID!
+  name: String!
+}
+
+type Query {
+  link: [Link!]!
+}
