@@ -2,7 +2,6 @@ package links
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	database "github.com/TeddyMuli/go_graphql_api/internal/pkg/db/psql"
