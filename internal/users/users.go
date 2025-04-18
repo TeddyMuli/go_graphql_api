@@ -40,3 +40,15 @@ func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
+
+func GetUserIdByUsername(username string) (int, error) {
+	var Id int
+
+	err := database.Db.QueryRow(context.Background(), "select ID from Users WHERE Username = $1 RETURNING ID", username).Scan(&Id)
+	if err != nil {
+		log.Fatal(err)
+		return 0, err
+	}
+
+	return Id, nil
+}
