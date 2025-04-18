@@ -3,6 +3,7 @@ package links
 import (
 	"context"
 	"log"
+	"strconv"
 
 	database "github.com/TeddyMuli/go_graphql_api/internal/pkg/db/psql"
 	"github.com/TeddyMuli/go_graphql_api/internal/users"
@@ -40,10 +41,12 @@ func GetAll() []Link {
 
 	var links []Link
 	for rows.Next() {
+		var id int
 		var link Link
-		if err := rows.Scan(&link.ID, &link.Title, &link.Address); err != nil {
+		if err := rows.Scan(&id, &link.Title, &link.Address); err != nil {
 			log.Fatal(err)
 		}
+		link.ID = strconv.Itoa(id)
 		links = append(links, link)
 	}
 
