@@ -20,9 +20,9 @@ func (user *User) Create() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	query := "INSERT INTO Users(Username,Password) VALUES($1,$2)"
-	err = database.Db.QueryRow(context.Background(), query, user.Username, hashedPassword).Scan()
+	var id int
+	query := "INSERT INTO Users(Username,Password) VALUES($1,$2) RETURNING ID"
+	err = database.Db.QueryRow(context.Background(), query, user.Username, hashedPassword).Scan(&id)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -44,11 +44,21 @@ func CheckPasswordHash(password, hash string) bool {
 func GetUserIdByUsername(username string) (int, error) {
 	var Id int
 
-	err := database.Db.QueryRow(context.Background(), "select ID from Users WHERE Username = $1 RETURNING ID", username).Scan(&Id)
+	err := database.Db.QueryRow(context.Background(), "select ID from Users WHERE Username = $1", username).Scan(&Id)
 	if err != nil {
 		log.Fatal(err)
 		return 0, err
 	}
 
 	return Id, nil
+}
+
+func (user *User) Authenticate() bool {
+	var hashedPassword string
+	err := database.Db.QueryRow(context.Background(), "select Password from Users WHERE Username = $1", user.Username).Scan(&hashedPassword)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return CheckPasswordHash(user.Password, hashedPassword)
 }

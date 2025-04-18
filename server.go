@@ -11,6 +11,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/TeddyMuli/go_graphql_api/graph"
+	"github.com/TeddyMuli/go_graphql_api/internal/auth"
 	database "github.com/TeddyMuli/go_graphql_api/internal/pkg/db/psql"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -28,7 +29,7 @@ func main() {
 	//database.Migrate()
 	
 	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
-
+	
 	srv.AddTransport(transport.Options{})
 	srv.AddTransport(transport.GET{})
 	srv.AddTransport(transport.POST{})
@@ -41,7 +42,7 @@ func main() {
 	})
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	http.Handle("/query", auth.Middleware(srv))
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
