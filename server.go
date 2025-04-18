@@ -11,7 +11,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/TeddyMuli/go_graphql_api/graph"
-	database "github.com/TeddyMuli/go_graphql_api/internal/pkg/db/migrations/psql"
+	database "github.com/TeddyMuli/go_graphql_api/internal/pkg/db/psql"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
@@ -25,7 +25,7 @@ func main() {
 
 	database.InitDB()
 	defer database.CloseDB()
-	database.Migrate()
+	//database.Migrate()
 	
 	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 

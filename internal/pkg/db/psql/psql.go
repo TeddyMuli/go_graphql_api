@@ -61,7 +61,7 @@ func Migrate() {
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
-		"file://internal/pkg/db/migrations/psql",
+		"file://internal/pkg/db/psql",
 		"postgres",
 		driver,
 	)
