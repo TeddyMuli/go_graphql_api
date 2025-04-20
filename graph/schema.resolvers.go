@@ -30,7 +30,7 @@ func (r *mutationResolver) CreateLink(ctx context.Context, input model.NewLink) 
 	link.User = user
 	linkID := link.Save()
 	graphqlUser := &model.User{
-		ID:   user.ID,
+		ID:   strconv.Itoa(user.ID),
 		Name: user.Username,
 	}
 	return &model.Link{ID: strconv.FormatInt(linkID, 10), Title:link.Title, Address:link.Address, User:graphqlUser}, nil
@@ -85,11 +85,14 @@ func (r *queryResolver) Links(ctx context.Context) ([]*model.Link, error) {
 
 	dbLinks := links.GetAll()
 	for _, link := range dbLinks{
-		graphqlUser := &model.User{
-			ID:   link.User.ID,
-			Name: link.User.Username,
+		var graphqlUser *model.User
+		if link.User != nil {
+			graphqlUser = &model.User{
+				ID:   strconv.Itoa(link.User.ID),
+				Name: link.User.Username,
+			}	
 		}
-		resultLinks = append(resultLinks, &model.Link{ID:link.ID, Title:link.Title, Address:link.Address, User: graphqlUser})
+		resultLinks = append(resultLinks, &model.Link{ID:strconv.Itoa(link.ID), Title:link.Title, Address:link.Address, User: graphqlUser})
 	}
 	return resultLinks, nil
 }

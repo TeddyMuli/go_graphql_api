@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"net/http"
-	"strconv"
 
 	"github.com/TeddyMuli/go_graphql_api/internal/users"
 	"github.com/TeddyMuli/go_graphql_api/internal/pkg/jwt"
@@ -40,7 +39,7 @@ func Middleware(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		}
-		user.ID = strconv.Itoa(id)
+		user.ID = id
 
 		// Store user in context
 		ctx := context.WithValue(r.Context(), userCtxKey, &user)

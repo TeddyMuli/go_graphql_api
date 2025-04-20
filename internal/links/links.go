@@ -2,16 +2,16 @@ package links
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
 	"log"
-	"strconv"
-
 	database "github.com/TeddyMuli/go_graphql_api/internal/pkg/db/psql"
 	"github.com/TeddyMuli/go_graphql_api/internal/users"
 )
 
 // #1
 type Link struct {
-	ID      string
+	ID      int
 	Title   string
 	Address string
 	User    *users.User
@@ -33,30 +33,36 @@ func (link Link) Save() int64 {
 }
 
 func GetAll() []Link {
-	rows, err := database.Db.Query(context.Background(), "SELECT id, title, address FROM Links")
+	rows, err := database.Db.Query(context.Background(), "SELECT l.ID, l.Title, l.Address, u.ID, u.Username FROM Links l LEFT JOIN Users u ON l.UserID = u.ID")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
 
 	var links []Link
-	var username string
-	var id int
 
 	for rows.Next() {
 		var link Link
-		if err := rows.Scan(&id, &link.Title, &link.Address, &id, &username); err != nil {
-			log.Fatal(err)
+		var username sql.NullString
+		var UserID int
+
+		if err := rows.Scan(&link.ID, &link.Title, &link.Address, &UserID, &username); err != nil {
+			log.Printf("Scan error: %v", err)
+      continue
 		}
-		link.User = &users.User{
-			ID:       strconv.Itoa(id),
-			Username: username,
+
+		if username.Valid {
+			link.User = &users.User{
+				ID:       UserID,
+				Username: username.String,
+			}
 		}
 		links = append(links, link)
 	}
 
 	if rows.Err() != nil {
-		log.Fatal(err)
+		log.Printf("Rows iteration error: %v", rows.Err())
+    return []Link{}
 	}
 
 	return links
